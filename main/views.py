@@ -10,7 +10,7 @@ import pandas as pd
 import datetime
 import time
 from django.conf import settings
-
+from django.shortcuts import redirect
 
 def home(request):
     return render(request, "home.html", {"title":"Home"})
@@ -64,7 +64,7 @@ def TakeImages(request):
         cv2.destroyAllWindows()
         res = "Images Saved for ID : " + criminal_id + " Name : " + criminal_name
         row = [criminal_id, criminal_name]
-        with open(settings.BASE_DIR+'\main\static\StudentDetails\StudentDetails.csv', 'a+') as csvFile:
+        with open(settings.BASE_DIR+'\main\static\CriminalDetails\CriminalDetails.csv', 'a+') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
@@ -115,7 +115,7 @@ def TrackImages(request):
     recognizer.read(settings.BASE_DIR+"\main\static\Model\Training.yml")
     harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
     faceCascade = cv2.CascadeClassifier(harcascadePath)
-    df = pd.read_csv(settings.BASE_DIR+"\main\static\StudentDetails\StudentDetails.csv")
+    df = pd.read_csv(settings.BASE_DIR+"\main\static\CriminalDetails\CriminalDetails.csv")
     cam = cv2.VideoCapture(0)
     font = cv2.FONT_HERSHEY_SIMPLEX
     col_names = ['Id', 'Name', 'Date', 'Time']
@@ -152,11 +152,11 @@ def TrackImages(request):
     date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
     timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
     Hour, Minute, Second = timeStamp.split(":")
-    fileName = settings.BASE_DIR+"\main\static\Attendance\Attendance_" + \
+    fileName = settings.BASE_DIR+"\main\static\Track\Track_Time_" + \
         date+"_"+Hour+"-"+Minute+"-"+Second+".csv"
     attendance.to_csv(fileName, index=False)
     cam.release()
     cv2.destroyAllWindows()
     #print(attendance)
     res = attendance
-    return HttpResponse(res)
+    return redirect("/")
