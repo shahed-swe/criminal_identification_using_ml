@@ -1,0 +1,16 @@
+{%extends 'user_base.html'%}
+<!-- extending template -->
+{%block content%}
+<h1>Hello</h1>
+<div class="container">
+    <form method="POST" action="/take/">
+        {%csrf_token%}
+        <input type="text" class="form-control" name="id" id="cr_id" placeholder="Enter Numeric Value">
+        <br>
+        <input type="text" class="form-control" name="name" id="cr_name" placeholder="Enter Your Full Name">
+        <br>
+        <button class="btn btn-success">Submit</button>
+    </form>
+</div>
+<!-- block end -->
+{%endblock%}
