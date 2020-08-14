@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
 # Create your views here.
+from .models import criminalData
 import cv2,os
 import shutil
 import csv
@@ -11,9 +12,12 @@ import datetime
 import time
 from django.conf import settings
 from django.shortcuts import redirect
+from .forms import DataForm
 
 def home(request):
-    return render(request, "home.html", {"title":"Home"})
+    dataform = DataForm()
+
+    return render(request, "home.html", {"title":"Home","form":dataform})
 
 def is_number(num):
     try:
@@ -32,8 +36,19 @@ def is_number(num):
     return False
 
 def TakeImages(request):
-    criminal_id = request.POST['id']
-    criminal_name = request.POST['name']
+    if request.method == 'POST':
+        dataform = DataForm(request.POST)
+        if dataform.is_valid():
+            try:
+                cid = dataform.cleaned_data['cid']
+                name = dataform.cleaned_data['name']
+                record = dataform.cleaned_data['record']
+                level = dataform.cleaned_data['level']
+                dataform.save()
+            except:
+                pass
+    criminal_id = cid
+    criminal_name = name
     if(is_number(criminal_id) and criminal_name.isalpha()):
         cam = cv2.VideoCapture(0)
         harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
@@ -111,6 +126,7 @@ def getImagesAndLabels(path):
 
 
 def TrackImages(request):
+    data = criminalData.objects.all()
     recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
     recognizer.read(settings.BASE_DIR+"\main\static\Model\Training.yml")
     harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
@@ -119,7 +135,7 @@ def TrackImages(request):
     cam = cv2.VideoCapture(0)
     font = cv2.FONT_HERSHEY_SIMPLEX
     col_names = ['Id', 'Name', 'Date', 'Time']
-    attendance = pd.DataFrame(columns=col_names)
+    track_moment = pd.DataFrame(columns=col_names)
     while True:
         ret, im = cam.read()
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
@@ -134,7 +150,7 @@ def TrackImages(request):
                     ts).strftime('%H:%M:%S')
                 aa = df.loc[df['Id'] == Id]['Name'].values
                 tt = str(Id)+"-"+aa
-                attendance.loc[len(attendance)] = [Id, aa, date, timeStamp]
+                track_moment.loc[len(track_moment)] = [Id, aa, date, timeStamp]
 
             else:
                 Id = 'Unknown'
@@ -144,7 +160,7 @@ def TrackImages(request):
                 cv2.imwrite(settings.BASE_DIR+"\main\static\ImagesUnknown\Image"+str(noOfFile) +
                             ".jpg", im[y:y+h, x:x+w])
             cv2.putText(im, str(tt), (x, y+h), font, 1, (255, 255, 255), 2)
-        attendance = attendance.drop_duplicates(subset=['Id'], keep='first')
+        track_moment = track_moment.drop_duplicates(subset=['Id'], keep='first')
         cv2.imshow('im', im)
         if (cv2.waitKey(1) == ord('q')):
             break
@@ -154,9 +170,10 @@ def TrackImages(request):
     Hour, Minute, Second = timeStamp.split(":")
     fileName = settings.BASE_DIR+"\main\static\Track\Track_Time_" + \
         date+"_"+Hour+"-"+Minute+"-"+Second+".csv"
-    attendance.to_csv(fileName, index=False)
+    track_moment.to_csv(fileName, index=False)
     cam.release()
     cv2.destroyAllWindows()
-    #print(attendance)
-    res = attendance
-    return redirect("/")
+    #print(track_moment)
+    res = track_moment
+    criminal = criminalData.objects.filter(cid = Id)
+    return render(request, 'criminal_details.html',{"data":criminal})

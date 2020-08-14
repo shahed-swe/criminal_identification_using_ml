@@ -1,0 +1,12 @@
+{% for i in data %}
+{{i.cid}}
+{{i.name}}
+{{i.record}}
+{%if i.level == 'rl'%}
+Released
+{%elif i.level == 'wt'%}
+Wanted
+{%elif i.level == 'mw'%}
+Most Wanted
+{%endif%}
+{% endfor %}
