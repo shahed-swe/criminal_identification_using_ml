@@ -1,25 +1,46 @@
 {%extends 'user_base.html'%}
 <!-- extending template -->
+{%load static%}
+<!-- staiic loaded -->
 {%block content%}
 <style>
-    .form-control{
-        margin-top: 20px;
+    .home-section {
+        font-family: "Red Hat Text", sans-serif;
+        height: 635px;
+        width: 1366px;
+        background-image: url("{% static 'img/court.jpg' %}");
+        background-repeat: no-repeat;
     }
-    button{
-        margin-top: 20px;
+    
+    .home-section h2 {
+        padding-top: 200px;
+        text-align: center;
+        color: #022444;
+        font-weight: 400;
     }
-        
+    
+    .home-section h2 p {
+        border: 2px solid #022444;
+    }
+    
+    .home-section #first-text {
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+        color: #022444;
+    }
 </style>
-<h1>Hello</h1>
-<div class="container">
-    <form method="POST" action="/take/">
-        {%csrf_token%}
-        {{form.cid}}
-        {{form.name}}
-        {{form.record}}
-        {{form.level}}
-        <button class="btn btn-success">Submit</button>
-    </form>
-</div>
+<section class="home-section">
+    <div class="container">
+        <h2>
+            <p>Criminal Investigation Deparment</p>
+        </h2>
+        <p id="first-text">We stands for justice</p>
+    </div>
+</section>
 <!-- block end -->
+{%endblock%}
+<!-- scripts are here -->
+{%block script%}
+<!-- endblock script -->
 {%endblock%}

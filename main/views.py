@@ -15,9 +15,11 @@ from django.shortcuts import redirect
 from .forms import DataForm
 
 def home(request):
-    dataform = DataForm()
+    return render(request, "home.html", {"title":"Home"})
 
-    return render(request, "home.html", {"title":"Home","form":dataform})
+def add_criminal(request):
+    dataform = DataForm()
+    return render(request, 'add_criminal.html', {"title": "Track", "form": dataform})
 
 def is_number(num):
     try:
@@ -36,20 +38,20 @@ def is_number(num):
     return False
 
 def TakeImages(request):
-    if request.method == 'POST':
-        dataform = DataForm(request.POST)
-        if dataform.is_valid():
-            try:
-                cid = dataform.cleaned_data['cid']
-                name = dataform.cleaned_data['name']
-                record = dataform.cleaned_data['record']
-                level = dataform.cleaned_data['level']
-                dataform.save()
-            except:
-                pass
-    criminal_id = cid
-    criminal_name = name
+    criminal_id = request.POST['cid']
+    criminal_name = request.POST['name']
     if(is_number(criminal_id) and criminal_name.isalpha()):
+        if request.method == 'POST':
+            dataform = DataForm(request.POST)
+            if dataform.is_valid():
+                try:
+                    cid = dataform.cleaned_data['cid']
+                    name = dataform.cleaned_data['name']
+                    record = dataform.cleaned_data['record']
+                    level = dataform.cleaned_data['level']
+                    dataform.save()
+                except:
+                    pass
         cam = cv2.VideoCapture(0)
         harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
         detector = cv2.CascadeClassifier(harcascadePath)
@@ -83,12 +85,14 @@ def TakeImages(request):
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
-        return HttpResponse("<h1>{}</h1>".format(res))
+        return render(request, 'message.html',{"title":"Track","message":res,"value":"1"})
     else:
         if(is_number(criminal_id)):
-            return HttpResponse("<h1>Enter Alphabatic Name</h1>")
+            res = "Enter Alphabatic Name"
+            return render(request, "message.html", {"title": "Track", "message": res, "value": "0"})
         if(criminal_name.isalpha()):
-            return HttpResponse("<h1>Enter Numberic Id</h1>")
+            res = "Enter Numeric Id"
+            return render(request, "message.html", {"title": "Track", "message": res, "value": "0"})
 
 
 def TrainImages(request):
@@ -99,7 +103,7 @@ def TrainImages(request):
     recognizer.train(faces, np.array(Id))
     recognizer.save(settings.BASE_DIR+"\main\static\Model\Training.yml")
     res = "Image Trained"
-    return HttpResponse("<h1>{}</h1>".format(res))
+    return render(request, "message.html",{"title":"Train","message":res,"value":'3'})
 
 
 def getImagesAndLabels(path):
