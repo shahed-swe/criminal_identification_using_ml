@@ -1,0 +1,110 @@
+{%extends 'user_base.html'%}
+<!-- extending template -->
+{%load static%}
+<!-- staiic loaded -->
+{%block content%}
+<style>
+    body {
+        background-color: #002244;
+    }
+    
+    .box {
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        overflow: hidden;
+    }
+    
+    .box .b {
+        border-radius: 50%;
+        border-left: 4px solid;
+        border-right: 4px solid;
+        border-top: 4px solid transparent !important;
+        border-bottom: 4px solid transparent !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: ro 2s infinite;
+    }
+    
+    .box .b1 {
+        border-color: #4A69BD;
+        width: 194px;
+        height: 194px;
+    }
+    
+    .box .b2 {
+        border-color: #F6B93B;
+        width: 156px;
+        height: 156px;
+        animation-delay: 0.2s;
+    }
+    
+    .box .b3 {
+        border-color: #2ECC71;
+        width: 123px;
+        height: 123px;
+        animation-delay: 0.4s;
+    }
+    
+    .box .b4 {
+        border-color: #34495E;
+        width: 100px;
+        height: 100px;
+        animation-delay: 0.6s;
+    }
+    
+    .box a {
+        text-decoration: none;
+        color: white;
+        position: relative;
+        top: 83px;
+        left: 72px;
+    }
+    
+    .notice {
+        margin-top: 500px;
+        margin-left: 43%
+    }
+    
+    .notice p {
+        color: white;
+    }
+    
+    @keyframes ro {
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+        50% {
+            transform: translate(-50%, -50%) rotate(-180deg);
+        }
+        100% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+    }
+</style>
+
+<section class="track">
+    <div class="box">
+        <div class="b b1"></div>
+        <div class="b b2"></div>
+        <div class="b b3"></div>
+        <div class="b b4"></div>
+        <a href="/track">
+            <h4>Track</h4>
+        </a>
+    </div>
+</section>
+<section class="notice">
+    <p>please press (q) after identify</p>
+</section>
+<!-- block end -->
+{%endblock%}
+<!-- scripts are here -->
+{%block script%}
+<!-- endblock script -->
+{%endblock%}

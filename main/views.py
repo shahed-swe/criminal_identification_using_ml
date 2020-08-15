@@ -19,7 +19,10 @@ def home(request):
 
 def add_criminal(request):
     dataform = DataForm()
-    return render(request, 'add_criminal.html', {"title": "Track", "form": dataform})
+    return render(request, 'add_criminal.html', {"title": "Add Criminal", "form": dataform})
+
+def trackpage(request):
+    return render(request, 'trackpage.html', {"title":"Track"})
 
 def is_number(num):
     try:
