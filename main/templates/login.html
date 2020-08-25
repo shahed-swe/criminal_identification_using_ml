@@ -1,0 +1,109 @@
+<!-- extending base html -->
+{%extends 'user_base.html'%}
+<!-- base template extended -->
+<!-- loading static -->
+{%load static%}
+<!-- static files has been loaded -->
+{% block content %}
+<!-- main block starts here -->
+<!-- content starts -->
+<style>
+    body {
+        background-color: #1a1e23;
+    }
+    
+    .banner-section {
+        display: none;
+    }
+    
+    .login-form {
+        background-color: #1a1e23;
+        color: white;
+        padding-top: 110px;
+    }
+    
+    .login-form h2 {
+        font-family: "Red Hat Display", sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        color: white;
+        padding: 20px 0 20px 0;
+    }
+    
+    .login-form .form-row {
+        padding-top: 50px;
+    }
+    
+    #labelforusername,
+    #labelforpassword {
+        font-family: "Red Hat Display", sans-serif;
+        padding-top: 20px;
+        font-weight: 700;
+        font-size: 16px;
+    }
+    
+    .login-form p {
+        padding-top: 20px;
+        font-family: "Red Hat Text", sans-serif;
+        font-weight: 400;
+        font-size: 16px;
+    }
+    
+    .login-form p a {
+        color: #00ce7c;
+    }
+    
+    .login-form .form-control {
+        height: 45px;
+    }
+    
+    .login-form .btn {
+        height: 45px;
+        color: white;
+        background-color: #022444;
+        font-family: "Red Hat Text";
+        font-size: 18px;
+        font-weight: 400;
+        margin-top: 40px;
+    }
+    
+    @media only screen and (max-width: 550px) {
+        .login-form {
+            padding-top: 50px;
+        }
+    }
+</style>
+<section class="login-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-6 col-md-6 col-sm-10">
+                <form method="POST">{%csrf_token%}
+                    <div class="form-row">
+                        <div class="col-12">
+                            <h2>Login</h2>
+                            <label id="labelforusername" for="username">User Name</label>
+                            <input type="text" name="username" class="form-control" placeholder="Enter User Name">
+                            <label id="labelforpassword" for="username">Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="Enter Your Password">
+                            <!-- <p style="padding-top:20px">Forgot Password? <a class="text-primary" href="/reset_password">Reset</a></p> -->
+                            <button class="btn btn-primary shadow-none btn-block">Login</button>
+                            <!-- <p>Don't have an account? <a class="text-primary" href="/register">Sign Up</a></p> -->
+                        </div>
+                        <div class="col-12"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-10">
+                <img class="img-fluid w-85" src="{%static 'front/img/login.webp'%}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+<!-- content stop -->
+{% endblock content %}
+<!-- main block stops here -->
+{% block script %}
+<!-- script tag start -->
+
+<!-- script tag stop -->
+{% endblock script %}

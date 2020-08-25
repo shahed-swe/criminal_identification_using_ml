@@ -1,0 +1,149 @@
+<!-- extending base html -->
+{%extends 'user_base.html'%}
+<!-- base template extended -->
+<!-- loading static -->
+{%load static%}
+<!-- static files has been loaded -->
+{% block content %}
+<!-- main block starts here -->
+<!-- content starts -->
+<style>
+    .banner-section {
+        display: none;
+    }
+    
+    .registration-panel {
+        background-color: #1a1e23;
+        color: white;
+        padding-top: 180px;
+    }
+    
+    .registration-panel h2 {
+        font-family: "Red Hat Display", sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        color: white;
+        padding: 20px 0 20px 0;
+    }
+    
+    .registration-panel .form-row {
+        padding-top: 50px;
+    }
+    
+    #user_field,
+    #email_field,
+    #first_name,
+    #last_name,
+    #password_field_one,
+    #password_field_two {
+        font-family: "Red Hat Display", sans-serif;
+        margin-top: 35px;
+        font-weight: 700;
+        font-size: 16px;
+    }
+    
+    .registration-panel .form-control {
+        height: 45px;
+        font-family: "Red Hat Text", sans-serif;
+    }
+    
+    .registration-panel .btn {
+        height: 45px;
+        background-color: #00ce7c;
+        color: #1a1e23;
+        font-family: "Red Hat Text";
+        font-size: 18px;
+        font-weight: 400;
+        margin-top: 35px;
+    }
+    
+    @media only screen and (max-width: 550px) {
+        .registration-panel {
+            padding-top: 50px;
+        }
+    }
+</style>
+
+<section class="registration-panel">
+    <div class="container">
+        <div class="row">
+            <form method="POST" class="col-12 col-lg-6 col-md-6 col-sm-10" id="register_form">{%csrf_token%}
+                <!-- form started here -->
+                <h2>Registration</h2>
+
+                <!-- username field -->
+                {{form.username}}
+                <!-- first name field -->
+                {{form.first_name}}
+                <!-- last_name field -->
+                {{form.last_name}}
+
+                <!-- email field -->
+                {{form.email}}
+
+                <!-- passone field -->
+                {{form.password1}}
+
+                <!-- passtwo field -->
+                {{form.password2}}
+                <button class="btn btn-success btn-block shadow-none">SIGN UP</button>
+            </form>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-10">
+                <img class="img-fluid w-85" src="{%static 'front/img/login.webp'%}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+<!-- content stop -->
+{% endblock content %}
+<!-- main block stops here -->
+{% block script %}
+<!-- script tag start -->
+<script src="{%static 'front/js/jquery.validate.min.js'%}"></script>
+<script src="{%static 'front/js/additional-methods.min.js'%}"></script>
+<script>
+    $(document).ready(function() {
+        $("#register_form").validate({
+            rules: {
+                username: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                    email: true,
+                },
+                password1: {
+                    requried: true,
+                    minlength: 8
+                },
+                password2: {
+                    required: true,
+                    minlength: 8,
+                    equalTo: "#password_field_one"
+                }
+            },
+            messages: {
+                username: {
+                    required: 'Please Enter your username',
+                },
+                email: {
+                    required: "Email is required",
+                    email: "Enter a valid email address",
+                },
+                password1: {
+                    required: "Enter your password",
+                    password: "Password not so strong"
+                },
+                password2: {
+                    required: "Enter password again",
+                    equalTo: "Password Doesn't match"
+                }
+            },
+            submitHnadler: function(form) {
+                alert("Submitted Successfully!");
+            }
+        });
+    })
+</script>
+<!-- script tag stop -->
+{% endblock script %}

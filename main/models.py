@@ -15,3 +15,6 @@ class criminalData(models.Model):
     trace_no = models.CharField(max_length=120,blank=True, null=True)
     record = models.TextField(max_length=120,blank=True, null=True)
     level = models.CharField(max_length=2,choices=levels,default='rl')
+
+    class Meta:
+        db_table = 'criminal_data'

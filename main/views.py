@@ -13,6 +13,11 @@ import time
 from django.conf import settings
 from django.shortcuts import redirect
 from .forms import DataForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .forms import CreateUserForm
+
 
 def home(request):
     return render(request, "home.html", {"title":"Home"})
@@ -23,6 +28,47 @@ def add_criminal(request):
 
 def trackpage(request):
     return render(request, 'trackpage.html', {"title":"Track"})
+
+
+def mylogin(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+    if request.method == 'POST':
+        utxt = request.POST.get('username')
+        upass = request.POST.get('password')
+        print(utxt, upass)
+        if utxt != "" and upass != "":
+            user = authenticate(username=utxt, password=upass)
+            if user != None:
+                login(request, user)
+                return redirect('/')
+    context = {"title": "Login"}
+    return render(request, 'login.html', context)
+
+
+def myregister(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+    if request.method == "POST":
+        uname = request.POST.get('username')
+        f_name = request.POST.get('first_name')
+        l_name = request.POST.get('last_name')
+        full_name = f_name + ' ' + l_name
+        email = request.POST.get('email')
+        password = request.POST.get('password1')
+        user = User.objects.create_user(username=uname, first_name=f_name, last_name=l_name, email=email, password=password)
+        customer.save()
+        return redirect('/login')
+    form = CreateUserForm()
+    context = {"title": "Register", 'form': form}
+    return render(request, 'registration.html', context)
+
+
+def mylogout(request):
+    logout(request)
+    return redirect('/')
+
+
 
 def is_number(num):
     try:
@@ -75,7 +121,7 @@ def TakeImages(request):
                 #display the frame
                 cv2.imshow('frame', img)
             #wait for 100 miliseconds
-            if cv2.waitKey(50) & 0xFF == ord('q'):
+            if cv2.waitKey(100) & 0xFF == ord('q'):
                 break
             # break if the sample number is morethan 100
             elif sampleNum > 60:
@@ -143,6 +189,7 @@ def TrackImages(request):
     font = cv2.FONT_HERSHEY_SIMPLEX
     col_names = ['Id', 'Name', 'Date', 'Time']
     track_moment = pd.DataFrame(columns=col_names)
+    val = 0
     while True:
         ret, im = cam.read()
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
@@ -157,6 +204,7 @@ def TrackImages(request):
                     ts).strftime('%H:%M:%S')
                 aa = df.loc[df['Id'] == Id]['Name'].values
                 tt = str(Id)+"-"+aa
+                val = Id
                 track_moment.loc[len(track_moment)] = [Id, aa, date, timeStamp]
 
             else:
@@ -166,7 +214,7 @@ def TrackImages(request):
                 noOfFile = len(os.listdir(settings.BASE_DIR+"\main\static\ImagesUnknown"))+1
                 cv2.imwrite(settings.BASE_DIR+"\main\static\ImagesUnknown\Image"+str(noOfFile) +
                             ".jpg", im[y:y+h, x:x+w])
-            cv2.putText(im, str(tt), (x, y+h), font, 1, (255, 255, 255), 2)
+            cv2.putText(im, str(tt), (x, y+h), font, 0.5, (255, 255, 255), 1)
         track_moment = track_moment.drop_duplicates(subset=['Id'], keep='first')
         cv2.imshow('im', im)
         if (cv2.waitKey(1) == ord('q')):
@@ -182,5 +230,7 @@ def TrackImages(request):
     cv2.destroyAllWindows()
     #print(track_moment)
     res = track_moment
-    criminal = criminalData.objects.filter(cid = Id)
+    criminal = criminalData.objects.filter(cid = val)
+    # take = len(new_list)
     return render(request, 'criminal_details.html',{"data":criminal})
+    

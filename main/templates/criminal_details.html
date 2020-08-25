@@ -1,12 +1,53 @@
-{% for i in data %}
-{{i.cid}}
-{{i.name}}
-{{i.record}}
-{%if i.level == 'rl'%}
-Released
-{%elif i.level == 'wt'%}
-Wanted
-{%elif i.level == 'mw'%}
-Most Wanted
-{%endif%}
-{% endfor %}
+ {% extends 'user_base.html' %}
+<!-- loaing static-->
+{% load static %}
+<!--static file loaded-->
+{% block content %}
+<style>
+    .user_details {
+        font-family: "Red Hat Text", sans-serif;
+        padding-top: 70px;
+    }
+    
+    .user_details h3 {
+        text-align: center;
+        border: 1px solid #002244;
+        border-style: dashed;
+    }
+    
+    .back {
+        margin-top: 40px;
+    }
+</style>
+<section class="user_details">
+    <div class="container">
+        <h3>Criminal Details</h3>
+        <div class="row">
+            {% for i in data %}
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Name:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.name}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Address:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.address}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Phone:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.phone}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Case No:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.case_no}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Trace No:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.trace_no}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Record:</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">{{i.record}}</div>
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6">Level:</div>
+            {%if i.level == 'rl'%}
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">Released</div>
+            {%elif i.level == 'wt'%}
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">Wanted</div>
+            {%elif i.level == 'mw'%}
+            <div class="col-12 col-lg-6 col-md-6 col-sm-6 float-right">Most Wanted</div>
+            {%endif%}
+            <!-- condition over -->
+            {% endfor %}
+        </div>
+        <a class="btn btn-success back" href="/track">Back</a>
+    </div>
+</section>
+{% endblock %}

@@ -8,4 +8,7 @@ urlpatterns = [
     url(r'^train/$', views.TrainImages, name="TrainImages"),
     url(r'^trackpage/$', views.trackpage, name="trackpage"),
     url(r'^track/$', views.TrackImages, name="TrackImages"),
+    url(r'^login/$', views.mylogin,name="mylogin"),
+    # url(r'^register/$', views.myregister,name="myregister"),
+
 ]
