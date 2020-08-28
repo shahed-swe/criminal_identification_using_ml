@@ -6,14 +6,13 @@
 <style>
     .home-section {
         font-family: "Red Hat Text", sans-serif;
-        height: 635px;
-        width: 1366px;
-        background-image: url("{% static 'img/court.jpg' %}");
-        background-repeat: no-repeat;
+        /* background-image: url("{% static 'img/court.jpg' %}"); */
+        /* background-repeat: no-repeat; */
     }
     
     .home-section h2 {
-        padding-top: 200px;
+        position: relative;
+        top: -450px;
         text-align: center;
         color: #022444;
         font-weight: 400;
@@ -24,13 +23,27 @@
     }
     
     .home-section #first-text {
+        position: relative;
+        top: -440px;
         font-size: 20px;
         font-weight: 700;
         text-align: center;
         color: #022444;
     }
+    
+    @media only screen and (min-width: 1400px) {
+        .home-section h2 {
+            position: relative;
+            top: -650px;
+        }
+        .home-section #first-text {
+            position: relative;
+            top: -655px;
+        }
+    }
 </style>
 <section class="home-section">
+    <img class="img-fluid w-100" src="{% static 'img/court.jpg' %}" alt="">
     <div class="container">
         <h2>
             <p>Criminal Investigation Deparment</p>

@@ -197,6 +197,7 @@ def TrackImages(request):
         for(x, y, w, h) in faces:
             cv2.rectangle(im, (x, y), (x+w, y+h), (225, 0, 0), 2)
             Id, conf = recognizer.predict(gray[y:y+h, x:x+w])
+            print(conf)
             if(conf < 50):
                 ts = time.time()
                 date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
