@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^trackpage/$', views.trackpage, name="trackpage"),
     url(r'^track/$', views.TrackImages, name="TrackImages"),
     url(r'^login/$', views.mylogin,name="mylogin"),
+    url(r'^logout/$', views.mylogout, name="mylogout"),
     # url(r'^register/$', views.myregister,name="myregister"),
 
 ]

@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse
 # Create your views here.
 from .models import criminalData
@@ -23,8 +23,11 @@ def home(request):
     return render(request, "home.html", {"title":"Home"})
 
 def add_criminal(request):
-    dataform = DataForm()
-    return render(request, 'add_criminal.html', {"title": "Add Criminal", "form": dataform})
+    if not request.user.is_authenticated:
+        return redirect('/login')
+    else:
+        dataform = DataForm()
+        return render(request, 'add_criminal.html', {"title": "Add Criminal", "form": dataform})
 
 def trackpage(request):
     return render(request, 'trackpage.html', {"title":"Track"})
@@ -179,59 +182,66 @@ def getImagesAndLabels(path):
 
 
 def TrackImages(request):
-    data = criminalData.objects.all()
-    recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
-    recognizer.read(settings.BASE_DIR+"\main\static\Model\Training.yml")
-    harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
-    faceCascade = cv2.CascadeClassifier(harcascadePath)
-    df = pd.read_csv(settings.BASE_DIR+"\main\static\CriminalDetails\CriminalDetails.csv")
-    cam = cv2.VideoCapture(0)
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    col_names = ['Id', 'Name', 'Date', 'Time']
-    track_moment = pd.DataFrame(columns=col_names)
-    val = 0
-    while True:
-        ret, im = cam.read()
-        gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(gray, 1.2, 5)
-        for(x, y, w, h) in faces:
-            cv2.rectangle(im, (x, y), (x+w, y+h), (225, 0, 0), 2)
-            Id, conf = recognizer.predict(gray[y:y+h, x:x+w])
-            print(conf)
-            if(conf < 50):
-                ts = time.time()
-                date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-                timeStamp = datetime.datetime.fromtimestamp(
-                    ts).strftime('%H:%M:%S')
-                aa = df.loc[df['Id'] == Id]['Name'].values
-                tt = str(Id)+"-"+aa
-                val = Id
-                track_moment.loc[len(track_moment)] = [Id, aa, date, timeStamp]
+    if not request.user.is_authenticated:
+        return redirect('/login')
+    else:
+        data = criminalData.objects.all()
+        recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
+        recognizer.read(settings.BASE_DIR+"\main\static\Model\Training.yml")
+        harcascadePath = settings.BASE_DIR + \
+            "\main\static\cascade\haarcascade_frontalface_default.xml"
+        faceCascade = cv2.CascadeClassifier(harcascadePath)
+        df = pd.read_csv(settings.BASE_DIR +
+                        "\main\static\CriminalDetails\CriminalDetails.csv")
+        cam = cv2.VideoCapture(0)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        col_names = ['Id', 'Name', 'Date', 'Time']
+        track_moment = pd.DataFrame(columns=col_names)
+        val = 0
+        while True:
+            ret, im = cam.read()
+            gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+            faces = faceCascade.detectMultiScale(gray, 1.2, 5)
+            for(x, y, w, h) in faces:
+                cv2.rectangle(im, (x, y), (x+w, y+h), (225, 0, 0), 2)
+                Id, conf = recognizer.predict(gray[y:y+h, x:x+w])
+                print(conf)
+                if(conf < 50):
+                    ts = time.time()
+                    date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+                    timeStamp = datetime.datetime.fromtimestamp(
+                        ts).strftime('%H:%M:%S')
+                    aa = df.loc[df['Id'] == Id]['Name'].values
+                    tt = str(Id)+"-"+aa
+                    val = Id
+                    track_moment.loc[len(track_moment)] = [Id, aa, date, timeStamp]
 
-            else:
-                Id = 'Unknown'
-                tt = str(Id)
-            if(conf > 75):
-                noOfFile = len(os.listdir(settings.BASE_DIR+"\main\static\ImagesUnknown"))+1
-                cv2.imwrite(settings.BASE_DIR+"\main\static\ImagesUnknown\Image"+str(noOfFile) +
-                            ".jpg", im[y:y+h, x:x+w])
-            cv2.putText(im, str(tt), (x, y+h), font, 0.5, (255, 255, 255), 1)
-        track_moment = track_moment.drop_duplicates(subset=['Id'], keep='first')
-        cv2.imshow('im', im)
-        if (cv2.waitKey(1) == ord('q')):
-            break
-    ts = time.time()
-    date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-    timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
-    Hour, Minute, Second = timeStamp.split(":")
-    fileName = settings.BASE_DIR+"\main\static\Track\Track_Time_" + \
-        date+"_"+Hour+"-"+Minute+"-"+Second+".csv"
-    track_moment.to_csv(fileName, index=False)
-    cam.release()
-    cv2.destroyAllWindows()
-    #print(track_moment)
-    res = track_moment
-    criminal = criminalData.objects.filter(cid = val)
-    # take = len(new_list)
-    return render(request, 'criminal_details.html',{"data":criminal})
-    
+                else:
+                    Id = 'Unknown'
+                    tt = str(Id)
+                if(conf > 75):
+                    noOfFile = len(os.listdir(settings.BASE_DIR +
+                                            "\main\static\ImagesUnknown"))+1
+                    cv2.imwrite(settings.BASE_DIR+"\main\static\ImagesUnknown\Image"+str(noOfFile) +
+                                ".jpg", im[y:y+h, x:x+w])
+                cv2.putText(im, str(tt), (x, y+h), font, 0.5, (255, 255, 255), 1)
+            track_moment = track_moment.drop_duplicates(
+                subset=['Id'], keep='first')
+            cv2.imshow('im', im)
+            if (cv2.waitKey(1) == ord('q')):
+                break
+        ts = time.time()
+        date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+        timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        Hour, Minute, Second = timeStamp.split(":")
+        fileName = settings.BASE_DIR+"\main\static\Track\Track_Time_" + \
+            date+"_"+Hour+"-"+Minute+"-"+Second+".csv"
+        track_moment.to_csv(fileName, index=False)
+        cam.release()
+        cv2.destroyAllWindows()
+        #print(track_moment)
+        res = track_moment
+        criminal = criminalData.objects.filter(cid=val)
+        # take = len(new_list)
+        return render(request, 'criminal_details.html', {"data": criminal})
+        

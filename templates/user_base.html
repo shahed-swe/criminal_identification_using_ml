@@ -56,6 +56,18 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/trackpage">Track</a>
                     </li>
+                    {%if user.is_authenticated%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{user | capfirst}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                    {%else%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    {%endif%}
                 </ul>
             </div>
         </div>
