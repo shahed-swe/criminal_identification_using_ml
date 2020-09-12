@@ -1,8 +1,9 @@
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
 # Create your views here.
 from .models import criminalData
 import cv2,os
+print(cv2.__version__)
 import shutil
 import csv
 import numpy as np
@@ -149,6 +150,7 @@ def TakeImages(request):
 
 def TrainImages(request):
     recognizer = cv2.face_LBPHFaceRecognizer.create()
+    # recognizer = cv2.face.xfeatures2d.SURF_create()
     harcascadePath = settings.BASE_DIR+"\main\static\cascade\haarcascade_frontalface_default.xml"
     detector = cv2.CascadeClassifier(harcascadePath)
     faces, Id = getImagesAndLabels(settings.BASE_DIR+"\main\static\TrainingImage")
@@ -186,7 +188,8 @@ def TrackImages(request):
         return redirect('/login')
     else:
         data = criminalData.objects.all()
-        recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
+        recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecog/nizer()
+        # recognizer = cv2.face.xfeatures2d.SURF_create()
         recognizer.read(settings.BASE_DIR+"\main\static\Model\Training.yml")
         harcascadePath = settings.BASE_DIR + \
             "\main\static\cascade\haarcascade_frontalface_default.xml"
