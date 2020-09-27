@@ -215,12 +215,12 @@ def TrackImages(request):
                     timeStamp = datetime.datetime.fromtimestamp(
                         ts).strftime('%H:%M:%S')
                     aa = df.loc[df['Id'] == Id]['Name'].values
-                    tt = str(Id)+"-"+aa
+                    tt = str(Id)+"-"+aa+" No Mask"
                     val = Id
                     track_moment.loc[len(track_moment)] = [Id, aa, date, timeStamp]
 
                 else:
-                    Id = 'Unknown'
+                    Id = 'Not In Database or weared mask'
                     tt = str(Id)
                 if(conf > 75):
                     noOfFile = len(os.listdir(settings.BASE_DIR +
