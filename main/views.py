@@ -80,7 +80,6 @@ def is_number(num):
         return True
     except ValueError:
         pass
-
     try:
         import unicodedata
         unicodedata.numeric(num)
